@@ -15,12 +15,12 @@ PARALLEL_SCALER = 2
 
 class Builder:
 
-  def __init__(self, registry, build_dir='/tmp'):
+  def __init__(self, registry: str, build_dir: str='/tmp'):
     self.__registry = registry
     self.__build_dir = tempfile.mkdtemp(dir=build_dir)
 
   @property
-  def registry(self):
+  def registry(self) -> str:
     return self.__registry
 
   def build(self, bs: pb2.ImageBuildSet) -> List[Image]:

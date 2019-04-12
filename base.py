@@ -2,9 +2,11 @@ import os
 import shutil
 import docker
 import logging
+import datetime
 import numpy.random as rnd
 
 from collections import OrderedDict
+from typing import Iterable, List, Dict
 
 import util
 
@@ -19,10 +21,10 @@ logger.setLevel(logging.INFO)
 class Image:
 
   @classmethod
-  def ID(cls, repo, tag):
+  def ID(cls, repo: str, tag: str) -> str:
     return '%s:%s'%(repo, tag)
 
-  def __init__(self, repo, tag, n_hits=0, layers=[]):
+  def __init__(self, repo: str, tag: str, n_hits: int=0, layers: Iterable=[]):
     self.__repo = repo 
     self.__tag = tag
     self.__layers = OrderedDict({l.digest: l for l in layers})
@@ -30,26 +32,26 @@ class Image:
     self.__last_event = None
 
   @property
-  def repo(self):
+  def repo(self) -> str:
     return self.__repo 
 
   @property
-  def tag(self):
+  def tag(self) -> str:
     return self.__tag
 
   @property
-  def layers(self):
+  def layers(self) -> List[Layer]:
     return list(self.__layers.values())
 
   @property
-  def n_hits(self):
+  def n_hits(self) -> int:
     return self.__n_hits
 
   @property
-  def last_event(self):
+  def last_event(self) -> datetime.datetime:
     return self.__last_event
 
-  def add_layer(self, dgst, size):
+  def add_layer(self, dgst: str, size: int) -> Layer:
     layers = self.__layers
     if dgst in layers and layers[dgst].size < size:
       ol, nl = layers[dgst], Layer(dgst, size)
@@ -77,13 +79,13 @@ class Image:
     for l in to_squash:
       layers.pop(l.digest)
 
-  def update_last_event(self, ts):
+  def update_last_event(self, ts: datetime.datetime):
     self.__last_event = ts
 
   def hit(self):
     self.__n_hits += 1
 
-  def to_json(self):
+  def to_json(self) -> Dict[str, object]:
     return {
       'repo': self.repo,
       'tag': self.tag, 
@@ -91,7 +93,7 @@ class Image:
       'n_hits': self.n_hits,
     }
 
-  def build(self, build_dir, registry=None):
+  def build(self, build_dir: str, registry: str=None) -> docker.models.images.Image:
     base = '%s/image'%build_dir
     layer_base = '%s/layer'%build_dir
     try:
@@ -118,7 +120,7 @@ class Image:
       logging.exception('error pruning image %s'%self)
       raise e
 
-  def push(self, registry=None):
+  def push(self, registry: str=None):
     try:
       docker_cli = docker.from_env()
       repo = '%s/%s'%(registry, self.repo) if registry else self.repo
@@ -127,7 +129,7 @@ class Image:
       logging.exception('error pruning image %s'%self)
       raise e
   
-  def prune(self, registry=None):
+  def prune(self, registry: str=None):
     try:
       docker_cli = docker.from_env()
       docker_cli.images.remove('%s/%s'%(registry, str(self)) if registry else str(self))
@@ -135,41 +137,39 @@ class Image:
       logging.exception('error pruning image %s'%self)
       raise e
 
-  def __str__(self):
+  def __str__(self) -> str:
     return Image.ID(self.repo, self.tag)
 
-  def __eq__(self, i):
-    return self.repo == i.repo and self.tag == i.tag 
+  def __eq__(self, i: Image) -> bool:
+    return isinstance(i, Image) and self.repo == i.repo and self.tag == i.tag 
 
-  def __hash__(self):
+  def __hash__(self) -> int:
     return hash((self.repo, self.tag))
 
 
 class Layer:
 
-  def __init__(self, dgst, size, n_hits=0):
-    assert isinstance(dgst, str)
-    assert isinstance(size, int)
+  def __init__(self, dgst: str, size: int, n_hits: int=0):
     self.__dgst = dgst 
     self.__size = size 
     self.__n_hits = n_hits
 
   @property
-  def digest(self):
+  def digest(self) -> str:
     return self.__dgst
 
   @property
-  def size(self):
+  def size(self) -> int:
     return self.__size
 
   @property
-  def n_hits(self):
+  def n_hits(self) -> int:
     return self.__n_hits
 
-  def hit(self, n=1):
+  def hit(self, n: int=1):
     self.__n_hits += n
 
-  def build(self, build_dir, density=.1):
+  def build(self, build_dir: str, density: float=.1):
     base = '%s/layer'%build_dir
     os.makedirs(base, exist_ok=True)
     layer_f = '%s/%s'%(base, self.digest)
@@ -190,19 +190,19 @@ class Layer:
       logging.exception('error building layer %s'%self.digest)
       raise e
 
-  def to_json(self):
+  def to_json(self) -> Dict[str, object]:
     return {
       'digest': self.digest,
       'size': self.size,
       'n_hits': self.n_hits,
     }
 
-  def __str__(self):
+  def __str__(self) -> str:
     return self.digest
 
-  def __eq__(self, l):
-    return self.digest == l.digest
+  def __eq__(self, l: Layer) -> bool:
+    return isinstance(l, Layer) and self.digest == l.digest
 
-  def __hash__(self):
+  def __hash__(self) -> int:
     return hash(self.digest)
   

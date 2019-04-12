@@ -6,9 +6,9 @@ import logging
 
 class Registry:
 
-  def __init__(self, addr: str,  port: int = 5000, 
-               base_dir: str = '%s/registry'%os.path.expanduser('~'), 
-               container_id: str = 'registry'):
+  def __init__(self, addr: str,  port: int=5000, 
+               base_dir: str='%s/registry'%os.path.expanduser('~'), 
+               container_id: str='registry'):
     self.__addr = addr 
     self.__port = port
     self.__base_dir = base_dir 
