@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package dejavu.builder;
+
+import "google/protobuf/empty.proto";
+
+
+// Image is a Docker image
+message Image {
+  // image repository
+  string repo = 1;
+  // image tag
+  string tag = 2;
+  // constituent layers
+  repeated Layer layers = 3;
+}
+
+
+// Layer is storage layer of Docker images
+message Layer {
+  // unique, content-addressable digest
+  string digest = 1;
+  // layer size in bytes
+  uint64 size = 2;
+}
+
+// ImageBuildSet is the set of images to be built and published 
+// in the specified registry
+message ImageBuildSet {
+  // images to be built and published
+  repeated Image images = 1;
+}
+
+// BuilderResponse is the response returned by the builder
+message BuilderResponse {
+  
+  // the response code compliant to the HTTP status standard
+  uint32 code = 1;
+  // the message body of the response
+  string message = 2;
+
+}
+
+// ImageBuilder builds and publish images as requested.
+// It runs in front of a Docker registry where the images are published
+service ImageBuilder {
+  
+  // Build builds and publishes images specified in the ImageBuildSet.
+  // It returns 200 if images are built successfully but error code otherwise 
+  rpc Build(ImageBuildSet) returns (BuilderResponse) {}
+
+  // Purge purges both the manifests and blobs in the registry behind. 
+  // It returns 200 if the registry has been successfully purged but error code otherwise
+  rpc Purge(google.protobuf.Empty) returns (BuilderResponse) {}
+
+}

@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package dejavu.puller;
+
+import "google/protobuf/timestamp.proto";
+
+
+// ImagePull encodes the relevant info of an image pull
+message ImagePull {
+  // the image repository
+  string repo = 1;
+  // the image tag
+  string tag = 2;
+  // the client who initiates the pull
+  string client = 3;
+}
+
+// ImagePullSequence is a sequence of images to be pulled 
+// from the specified registry
+message ImagePullSequence {
+  // the sequence of image pulls
+  repeated ImagePull pulls = 1;
+  // the registry where to pull the images from
+  string registry = 2;
+}
+
+// ImagePullSummary summarizes the info relevant to the 
+// specific image pull
+message ImagePullSummary {
+  // the associated image pull
+  ImagePull pull = 1;
+  // the start time of the image pull
+  google.protobuf.Timestamp start_time = 2;
+  // the end time of the image pull
+  google.protobuf.Timestamp end_time = 3;
+}
+
+// ImagePuller pulls the image following the specified order 
+// of image pulls. It runs in front of a Docker daemon capable 
+// of pulling images from a Docker registry v2 instance.
+service ImagePuller {
+
+  // Pull starts the image pull in sequence.
+  // It yields the ImagePullSummary immediately after a image pull finishes
+  rpc Pull(ImagePullSequence) returns (stream ImagePullSummary) {}
+
+}
