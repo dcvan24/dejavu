@@ -3,6 +3,7 @@ syntax = "proto3";
 package dejavu.puller;
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
 
 
 // ImagePull encodes the relevant info of an image pull
@@ -13,15 +14,28 @@ message ImagePull {
   string tag = 2;
   // the client who initiates the pull
   string client = 3;
+  // the registry where to pull the image from
+  string registry = 4;
 }
 
-// ImagePullSequence is a sequence of images to be pulled 
-// from the specified registry
-message ImagePullSequence {
-  // the sequence of image pulls
-  repeated ImagePull pulls = 1;
-  // the registry where to pull the images from
-  string registry = 2;
+// Layer is the constituent layers of an image
+message LayerStat {
+    // layer digest
+    string digest = 1;
+    // full size of the layer
+    uint64 full_size = 2;
+    // the size of the compressed layer
+    uint64 compact_size = 3;
+    // whether the layer already exists
+    bool exists = 4;
+    // start time of layer downloading
+    google.protobuf.Timestamp download_start = 5;
+    // end time of layer downloading
+    google.protobuf.Timestamp download_end = 6;
+    // start time of layer extraction
+    google.protobuf.Timestamp extract_start = 7;
+    // end time of layer downloading
+    google.protobuf.Timestamp extract_end = 8;
 }
 
 // ImagePullSummary summarizes the info relevant to the 
@@ -33,6 +47,20 @@ message ImagePullSummary {
   google.protobuf.Timestamp start_time = 2;
   // the end time of the image pull
   google.protobuf.Timestamp end_time = 3;
+  // statistics of the activities related to the constituent layers
+  repeated LayerStat layers = 4;
+}
+
+// Config encodes the puller's configurations
+message Config {
+  // Space available on the puller's host for storing images. The 
+  // puller will prune images when observing the used space exceeds 
+  // the specified capacity. The capacity is assumed unbounded if 
+  // not set (with value 0)
+  uint64 capacity = 1;
+  // Whether include compressed archives of image layers when 
+  // accounting the used space
+  bool include_compressed = 2;
 }
 
 // ImagePuller pulls the image following the specified order 
@@ -40,8 +68,14 @@ message ImagePullSummary {
 // of pulling images from a Docker registry v2 instance.
 service ImagePuller {
 
-  // Pull starts the image pull in sequence.
-  // It yields the ImagePullSummary immediately after a image pull finishes
-  rpc Pull(ImagePullSequence) returns (stream ImagePullSummary) {}
+  // SetConfig configures the image puller as specified
+  rpc SetConfig(Config) returns (google.protobuf.Empty){}
+
+  // Pull starts the specified image pull and yields the ImagePullSummary 
+  // immediately after the pull finishes
+  rpc Pull(stream ImagePull) returns (stream ImagePullSummary) {}
+
+  // Prune the Docker images on the puller
+  rpc Prune(google.protobuf.Empty) returns (google.protobuf.Empty) {}
 
 }

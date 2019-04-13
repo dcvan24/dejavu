@@ -18,6 +18,66 @@ LAYER_CHUNK_SIZE = 2 ** 20 # 1MB
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
+class Layer:
+
+  def __init__(self, dgst: str, size: int, n_hits: int=0):
+    self.__dgst = dgst 
+    self.__size = size 
+    self.__n_hits = n_hits
+
+  @property
+  def digest(self) -> str:
+    return self.__dgst
+
+  @property
+  def size(self) -> int:
+    return self.__size
+
+  @property
+  def n_hits(self) -> int:
+    return self.__n_hits
+
+  def hit(self, n: int=1):
+    self.__n_hits += n
+
+  def build(self, build_dir: str, density: float=.5):
+    base = '%s/layer'%build_dir
+    os.makedirs(base, exist_ok=True)
+    layer_f = '%s/%s'%(base, self.digest)
+    if os.path.exists(layer_f):
+      return
+    try:
+      logging.debug('Creating layer %s, size: %s ...'%(self.digest, util.size(self.size)))
+      with open(layer_f, 'wb') as f:
+        if self.size == 0:
+          return 
+        size = self.size - 1
+        if size > 0:
+          load_size, empty_size = int(size * density), int(size * (1 - density))
+          f.seek(empty_size)
+          f.write(rnd.bytes(load_size))
+        f.write(b'\0')
+    except Exception as e:
+      logging.exception('error building layer %s'%self.digest)
+      raise e
+
+  def to_json(self) -> Dict[str, object]:
+    return {
+      'digest': self.digest,
+      'size': self.size,
+      'n_hits': self.n_hits,
+    }
+
+  def __str__(self) -> str:
+    return self.digest
+
+  def __eq__(self, l) -> bool:
+    return isinstance(l, Layer) and self.digest == l.digest
+
+  def __hash__(self) -> int:
+    return hash(self.digest)
+
+
 class Image:
 
   @classmethod
@@ -140,69 +200,10 @@ class Image:
   def __str__(self) -> str:
     return Image.ID(self.repo, self.tag)
 
-  def __eq__(self, i: Image) -> bool:
+  def __eq__(self, i) -> bool:
     return isinstance(i, Image) and self.repo == i.repo and self.tag == i.tag 
 
   def __hash__(self) -> int:
     return hash((self.repo, self.tag))
 
-
-class Layer:
-
-  def __init__(self, dgst: str, size: int, n_hits: int=0):
-    self.__dgst = dgst 
-    self.__size = size 
-    self.__n_hits = n_hits
-
-  @property
-  def digest(self) -> str:
-    return self.__dgst
-
-  @property
-  def size(self) -> int:
-    return self.__size
-
-  @property
-  def n_hits(self) -> int:
-    return self.__n_hits
-
-  def hit(self, n: int=1):
-    self.__n_hits += n
-
-  def build(self, build_dir: str, density: float=.1):
-    base = '%s/layer'%build_dir
-    os.makedirs(base, exist_ok=True)
-    layer_f = '%s/%s'%(base, self.digest)
-    if os.path.exists(layer_f):
-      return
-    try:
-      logging.debug('Creating layer %s, size: %s ...'%(self.digest, util.size(self.size)))
-      with open(layer_f, 'wb') as f:
-        if self.size == 0:
-          return 
-        size = self.size - 1
-        if size > 0:
-          load_size, empty_size = int(size * density), int(size * (1 - density))
-          f.seek(empty_size)
-          f.write(rnd.bytes(load_size))
-        f.write(b'\0')
-    except Exception as e:
-      logging.exception('error building layer %s'%self.digest)
-      raise e
-
-  def to_json(self) -> Dict[str, object]:
-    return {
-      'digest': self.digest,
-      'size': self.size,
-      'n_hits': self.n_hits,
-    }
-
-  def __str__(self) -> str:
-    return self.digest
-
-  def __eq__(self, l: Layer) -> bool:
-    return isinstance(l, Layer) and self.digest == l.digest
-
-  def __hash__(self) -> int:
-    return hash(self.digest)
   

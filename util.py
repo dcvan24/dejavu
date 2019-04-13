@@ -1,3 +1,6 @@
+from google.protobuf.timestamp_pb2 import Timestamp 
+
+
 def size(nbytes):
   if nbytes < 2 ** 10:
     return '%d B'%nbytes
@@ -18,3 +21,8 @@ def parse_uri(uri):
     return '/'.join(uri[1:repo_end]), uri[repo_end], uri[-1]
   except:
     return None, None, None
+
+def get_current_time() -> Timestamp:
+  ts = Timestamp()
+  ts.GetCurrentTime()
+  return ts
