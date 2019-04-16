@@ -11,8 +11,13 @@ message Image {
   string repo = 1;
   // image tag
   string tag = 2;
+  // image parent
+  string parent = 3;
+  // image aliases
+  repeated string aliases = 4;
   // constituent layers
-  repeated Layer layers = 3;
+  repeated Layer layers = 5;
+
 }
 
 
@@ -31,14 +36,10 @@ message ImageBuildSet {
   repeated Image images = 1;
 }
 
-// BuilderResponse is the response returned by the builder
-message BuilderResponse {
-  
-  // the response code compliant to the HTTP status standard
-  uint32 code = 1;
-  // the message body of the response
-  string message = 2;
-
+// ImageBuildSummary is a summary of the image building
+message ImageBuildSummary {
+  // total size of built image data
+  uint64 total_size = 1;
 }
 
 // ImageBuilder builds and publish images as requested.
@@ -46,11 +47,10 @@ message BuilderResponse {
 service ImageBuilder {
   
   // Build builds and publishes images specified in the ImageBuildSet.
-  // It returns 200 if images are built successfully but error code otherwise 
-  rpc Build(ImageBuildSet) returns (BuilderResponse) {}
+  // It returns a summary of the image building
+  rpc Build(ImageBuildSet) returns (ImageBuildSummary) {}
 
   // Purge purges both the manifests and blobs in the registry behind. 
-  // It returns 200 if the registry has been successfully purged but error code otherwise
-  rpc Purge(google.protobuf.Empty) returns (BuilderResponse) {}
+  rpc Purge(google.protobuf.Empty) returns (google.protobuf.Empty) {}
 
 }

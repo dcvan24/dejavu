@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='dejavu.builder',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\rbuilder.proto\x12\x0e\x64\x65javu.builder\x1a\x1bgoogle/protobuf/empty.proto\"I\n\x05Image\x12\x0c\n\x04repo\x18\x01 \x01(\t\x12\x0b\n\x03tag\x18\x02 \x01(\t\x12%\n\x06layers\x18\x03 \x03(\x0b\x32\x15.dejavu.builder.Layer\"%\n\x05Layer\x12\x0e\n\x06\x64igest\x18\x01 \x01(\t\x12\x0c\n\x04size\x18\x02 \x01(\x04\"6\n\rImageBuildSet\x12%\n\x06images\x18\x01 \x03(\x0b\x32\x15.dejavu.builder.Image\"0\n\x0f\x42uilderResponse\x12\x0c\n\x04\x63ode\x18\x01 \x01(\r\x12\x0f\n\x07message\x18\x02 \x01(\t2\x9d\x01\n\x0cImageBuilder\x12I\n\x05\x42uild\x12\x1d.dejavu.builder.ImageBuildSet\x1a\x1f.dejavu.builder.BuilderResponse\"\x00\x12\x42\n\x05Purge\x12\x16.google.protobuf.Empty\x1a\x1f.dejavu.builder.BuilderResponse\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\rbuilder.proto\x12\x0e\x64\x65javu.builder\x1a\x1bgoogle/protobuf/empty.proto\"j\n\x05Image\x12\x0c\n\x04repo\x18\x01 \x01(\t\x12\x0b\n\x03tag\x18\x02 \x01(\t\x12\x0e\n\x06parent\x18\x03 \x01(\t\x12\x0f\n\x07\x61liases\x18\x04 \x03(\t\x12%\n\x06layers\x18\x05 \x03(\x0b\x32\x15.dejavu.builder.Layer\"%\n\x05Layer\x12\x0e\n\x06\x64igest\x18\x01 \x01(\t\x12\x0c\n\x04size\x18\x02 \x01(\x04\"6\n\rImageBuildSet\x12%\n\x06images\x18\x01 \x03(\x0b\x32\x15.dejavu.builder.Image\"\'\n\x11ImageBuildSummary\x12\x12\n\ntotal_size\x18\x01 \x01(\x04\x32\x96\x01\n\x0cImageBuilder\x12K\n\x05\x42uild\x12\x1d.dejavu.builder.ImageBuildSet\x1a!.dejavu.builder.ImageBuildSummary\"\x00\x12\x39\n\x05Purge\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x62\x06proto3')
   ,
   dependencies=[google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
 
@@ -49,8 +49,22 @@ _IMAGE = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='layers', full_name='dejavu.builder.Image.layers', index=2,
-      number=3, type=11, cpp_type=10, label=3,
+      name='parent', full_name='dejavu.builder.Image.parent', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='aliases', full_name='dejavu.builder.Image.aliases', index=3,
+      number=4, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='layers', full_name='dejavu.builder.Image.layers', index=4,
+      number=5, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -68,7 +82,7 @@ _IMAGE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=62,
-  serialized_end=135,
+  serialized_end=168,
 )
 
 
@@ -105,8 +119,8 @@ _LAYER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=137,
-  serialized_end=174,
+  serialized_start=170,
+  serialized_end=207,
 )
 
 
@@ -136,29 +150,22 @@ _IMAGEBUILDSET = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=176,
-  serialized_end=230,
+  serialized_start=209,
+  serialized_end=263,
 )
 
 
-_BUILDERRESPONSE = _descriptor.Descriptor(
-  name='BuilderResponse',
-  full_name='dejavu.builder.BuilderResponse',
+_IMAGEBUILDSUMMARY = _descriptor.Descriptor(
+  name='ImageBuildSummary',
+  full_name='dejavu.builder.ImageBuildSummary',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='code', full_name='dejavu.builder.BuilderResponse.code', index=0,
-      number=1, type=13, cpp_type=3, label=1,
+      name='total_size', full_name='dejavu.builder.ImageBuildSummary.total_size', index=0,
+      number=1, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='message', full_name='dejavu.builder.BuilderResponse.message', index=1,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
@@ -174,8 +181,8 @@ _BUILDERRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=232,
-  serialized_end=280,
+  serialized_start=265,
+  serialized_end=304,
 )
 
 _IMAGE.fields_by_name['layers'].message_type = _LAYER
@@ -183,7 +190,7 @@ _IMAGEBUILDSET.fields_by_name['images'].message_type = _IMAGE
 DESCRIPTOR.message_types_by_name['Image'] = _IMAGE
 DESCRIPTOR.message_types_by_name['Layer'] = _LAYER
 DESCRIPTOR.message_types_by_name['ImageBuildSet'] = _IMAGEBUILDSET
-DESCRIPTOR.message_types_by_name['BuilderResponse'] = _BUILDERRESPONSE
+DESCRIPTOR.message_types_by_name['ImageBuildSummary'] = _IMAGEBUILDSUMMARY
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 Image = _reflection.GeneratedProtocolMessageType('Image', (_message.Message,), dict(
@@ -207,12 +214,12 @@ ImageBuildSet = _reflection.GeneratedProtocolMessageType('ImageBuildSet', (_mess
   ))
 _sym_db.RegisterMessage(ImageBuildSet)
 
-BuilderResponse = _reflection.GeneratedProtocolMessageType('BuilderResponse', (_message.Message,), dict(
-  DESCRIPTOR = _BUILDERRESPONSE,
+ImageBuildSummary = _reflection.GeneratedProtocolMessageType('ImageBuildSummary', (_message.Message,), dict(
+  DESCRIPTOR = _IMAGEBUILDSUMMARY,
   __module__ = 'builder_pb2'
-  # @@protoc_insertion_point(class_scope:dejavu.builder.BuilderResponse)
+  # @@protoc_insertion_point(class_scope:dejavu.builder.ImageBuildSummary)
   ))
-_sym_db.RegisterMessage(BuilderResponse)
+_sym_db.RegisterMessage(ImageBuildSummary)
 
 
 
@@ -222,8 +229,8 @@ _IMAGEBUILDER = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=283,
-  serialized_end=440,
+  serialized_start=307,
+  serialized_end=457,
   methods=[
   _descriptor.MethodDescriptor(
     name='Build',
@@ -231,7 +238,7 @@ _IMAGEBUILDER = _descriptor.ServiceDescriptor(
     index=0,
     containing_service=None,
     input_type=_IMAGEBUILDSET,
-    output_type=_BUILDERRESPONSE,
+    output_type=_IMAGEBUILDSUMMARY,
     serialized_options=None,
   ),
   _descriptor.MethodDescriptor(
@@ -240,7 +247,7 @@ _IMAGEBUILDER = _descriptor.ServiceDescriptor(
     index=1,
     containing_service=None,
     input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
-    output_type=_BUILDERRESPONSE,
+    output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
     serialized_options=None,
   ),
 ])

@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='dejavu.puller',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x0cpuller.proto\x12\rdejavu.puller\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1bgoogle/protobuf/empty.proto\"H\n\tImagePull\x12\x0c\n\x04repo\x18\x01 \x01(\t\x12\x0b\n\x03tag\x18\x02 \x01(\t\x12\x0e\n\x06\x63lient\x18\x03 \x01(\t\x12\x10\n\x08registry\x18\x04 \x01(\t\"\x9e\x02\n\tLayerStat\x12\x0e\n\x06\x64igest\x18\x01 \x01(\t\x12\x11\n\tfull_size\x18\x02 \x01(\x04\x12\x14\n\x0c\x63ompact_size\x18\x03 \x01(\x04\x12\x0e\n\x06\x65xists\x18\x04 \x01(\x08\x12\x32\n\x0e\x64ownload_start\x18\x05 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x30\n\x0c\x64ownload_end\x18\x06 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x31\n\rextract_start\x18\x07 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12/\n\x0b\x65xtract_end\x18\x08 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\"\xc2\x01\n\x10ImagePullSummary\x12&\n\x04pull\x18\x01 \x01(\x0b\x32\x18.dejavu.puller.ImagePull\x12.\n\nstart_time\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12,\n\x08\x65nd_time\x18\x03 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12(\n\x06layers\x18\x04 \x03(\x0b\x32\x18.dejavu.puller.LayerStat\"6\n\x06\x43onfig\x12\x10\n\x08\x63\x61pacity\x18\x01 \x01(\x04\x12\x1a\n\x12include_compressed\x18\x02 \x01(\x08\x32\xcf\x01\n\x0bImagePuller\x12<\n\tSetConfig\x12\x15.dejavu.puller.Config\x1a\x16.google.protobuf.Empty\"\x00\x12G\n\x04Pull\x12\x18.dejavu.puller.ImagePull\x1a\x1f.dejavu.puller.ImagePullSummary\"\x00(\x01\x30\x01\x12\x39\n\x05Prune\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\x0cpuller.proto\x12\rdejavu.puller\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1bgoogle/protobuf/empty.proto\"Y\n\tImagePull\x12\x0c\n\x04repo\x18\x01 \x01(\t\x12\x0b\n\x03tag\x18\x02 \x01(\t\x12\x0e\n\x06\x63lient\x18\x03 \x01(\t\x12\x10\n\x08registry\x18\x04 \x01(\t\x12\x0f\n\x07\x61liases\x18\x05 \x03(\t\"\x9e\x02\n\tLayerStat\x12\x0e\n\x06\x64igest\x18\x01 \x01(\t\x12\x11\n\tfull_size\x18\x02 \x01(\x04\x12\x14\n\x0c\x63ompact_size\x18\x03 \x01(\x04\x12\x0e\n\x06\x65xists\x18\x04 \x01(\x08\x12\x32\n\x0e\x64ownload_start\x18\x05 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x30\n\x0c\x64ownload_end\x18\x06 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x31\n\rextract_start\x18\x07 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12/\n\x0b\x65xtract_end\x18\x08 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\"\xc2\x01\n\x10ImagePullSummary\x12&\n\x04pull\x18\x01 \x01(\x0b\x32\x18.dejavu.puller.ImagePull\x12.\n\nstart_time\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12,\n\x08\x65nd_time\x18\x03 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12(\n\x06layers\x18\x04 \x03(\x0b\x32\x18.dejavu.puller.LayerStat\"E\n\x06\x43onfig\x12\x10\n\x08\x63\x61pacity\x18\x01 \x01(\x04\x12\x14\n\x0c\x63\x61\x63he_policy\x18\x02 \x01(\t\x12\x13\n\x0buse_archive\x18\x03 \x01(\x08\x32\xcf\x01\n\x0bImagePuller\x12<\n\tSetConfig\x12\x15.dejavu.puller.Config\x1a\x16.google.protobuf.Empty\"\x00\x12G\n\x04Pull\x12\x18.dejavu.puller.ImagePull\x1a\x1f.dejavu.puller.ImagePullSummary\"\x00(\x01\x30\x01\x12\x39\n\x05Prune\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x62\x06proto3')
   ,
   dependencies=[google_dot_protobuf_dot_timestamp__pb2.DESCRIPTOR,google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
 
@@ -63,6 +63,13 @@ _IMAGEPULL = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='aliases', full_name='dejavu.puller.ImagePull.aliases', index=4,
+      number=5, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -76,7 +83,7 @@ _IMAGEPULL = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=93,
-  serialized_end=165,
+  serialized_end=182,
 )
 
 
@@ -155,8 +162,8 @@ _LAYERSTAT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=168,
-  serialized_end=454,
+  serialized_start=185,
+  serialized_end=471,
 )
 
 
@@ -207,8 +214,8 @@ _IMAGEPULLSUMMARY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=457,
-  serialized_end=651,
+  serialized_start=474,
+  serialized_end=668,
 )
 
 
@@ -227,8 +234,15 @@ _CONFIG = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='include_compressed', full_name='dejavu.puller.Config.include_compressed', index=1,
-      number=2, type=8, cpp_type=7, label=1,
+      name='cache_policy', full_name='dejavu.puller.Config.cache_policy', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='use_archive', full_name='dejavu.puller.Config.use_archive', index=2,
+      number=3, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -245,8 +259,8 @@ _CONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=653,
-  serialized_end=707,
+  serialized_start=670,
+  serialized_end=739,
 )
 
 _LAYERSTAT.fields_by_name['download_start'].message_type = google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP
@@ -299,8 +313,8 @@ _IMAGEPULLER = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=710,
-  serialized_end=917,
+  serialized_start=742,
+  serialized_end=949,
   methods=[
   _descriptor.MethodDescriptor(
     name='SetConfig',

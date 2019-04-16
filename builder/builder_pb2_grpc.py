@@ -19,12 +19,12 @@ class ImageBuilderStub(object):
     self.Build = channel.unary_unary(
         '/dejavu.builder.ImageBuilder/Build',
         request_serializer=builder__pb2.ImageBuildSet.SerializeToString,
-        response_deserializer=builder__pb2.BuilderResponse.FromString,
+        response_deserializer=builder__pb2.ImageBuildSummary.FromString,
         )
     self.Purge = channel.unary_unary(
         '/dejavu.builder.ImageBuilder/Purge',
         request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-        response_deserializer=builder__pb2.BuilderResponse.FromString,
+        response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
         )
 
 
@@ -35,7 +35,7 @@ class ImageBuilderServicer(object):
 
   def Build(self, request, context):
     """Build builds and publishes images specified in the ImageBuildSet.
-    It returns 200 if images are built successfully but error code otherwise 
+    It returns a summary of the image building
     """
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
     context.set_details('Method not implemented!')
@@ -43,7 +43,6 @@ class ImageBuilderServicer(object):
 
   def Purge(self, request, context):
     """Purge purges both the manifests and blobs in the registry behind. 
-    It returns 200 if the registry has been successfully purged but error code otherwise
     """
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
     context.set_details('Method not implemented!')
@@ -55,12 +54,12 @@ def add_ImageBuilderServicer_to_server(servicer, server):
       'Build': grpc.unary_unary_rpc_method_handler(
           servicer.Build,
           request_deserializer=builder__pb2.ImageBuildSet.FromString,
-          response_serializer=builder__pb2.BuilderResponse.SerializeToString,
+          response_serializer=builder__pb2.ImageBuildSummary.SerializeToString,
       ),
       'Purge': grpc.unary_unary_rpc_method_handler(
           servicer.Purge,
           request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-          response_serializer=builder__pb2.BuilderResponse.SerializeToString,
+          response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(

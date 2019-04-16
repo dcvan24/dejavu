@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 import shutil
 import docker
@@ -20,10 +22,9 @@ logger.setLevel(logging.INFO)
 
 class Layer:
 
-  def __init__(self, dgst: str, size: int, n_hits: int=0):
+  def __init__(self, dgst: str, size: int):
     self.__dgst = dgst 
     self.__size = size 
-    self.__n_hits = n_hits
 
   @property
   def digest(self) -> str:
@@ -32,13 +33,6 @@ class Layer:
   @property
   def size(self) -> int:
     return self.__size
-
-  @property
-  def n_hits(self) -> int:
-    return self.__n_hits
-
-  def hit(self, n: int=1):
-    self.__n_hits += n
 
   def build(self, build_dir: str, density: float=.5):
     base = '%s/layer'%build_dir
@@ -64,8 +58,7 @@ class Layer:
   def to_json(self) -> Dict[str, object]:
     return {
       'digest': self.digest,
-      'size': self.size,
-      'n_hits': self.n_hits,
+      'size': self.size
     }
 
   def __str__(self) -> str:
@@ -84,12 +77,12 @@ class Image:
   def ID(cls, repo: str, tag: str) -> str:
     return '%s:%s'%(repo, tag)
 
-  def __init__(self, repo: str, tag: str, n_hits: int=0, layers: Iterable=[]):
+  def __init__(self, repo: str, tag: str, parent: Image=None, aliases: Iterable[str]=[], layers: Iterable[Layer]=[]):
     self.__repo = repo 
     self.__tag = tag
+    self.__parent = parent
     self.__layers = OrderedDict({l.digest: l for l in layers})
-    self.__n_hits = n_hits
-    self.__last_event = None
+    self.__aliases = set(aliases)
 
   @property
   def repo(self) -> str:
@@ -100,26 +93,46 @@ class Image:
     return self.__tag
 
   @property
+  def parent(self) -> Image:
+    return self.__parent
+
+  @property
+  def aliases(self) -> List[str]:
+    return list(self.__aliases)
+
+  @property
   def layers(self) -> List[Layer]:
     return list(self.__layers.values())
 
-  @property
-  def n_hits(self) -> int:
-    return self.__n_hits
-
-  @property
-  def last_event(self) -> datetime.datetime:
-    return self.__last_event
+  @parent.setter
+  def parent(self, p: Image):
+    self.__parent = p
+    for l in p.layers:
+      self.__layers.pop(l.digest, None)
 
   def add_layer(self, dgst: str, size: int) -> Layer:
     layers = self.__layers
-    if dgst in layers and layers[dgst].size < size:
-      ol, nl = layers[dgst], Layer(dgst, size)
-      nl.hit(ol.n_hits)
-      layers[dgst] = nl
-    elif dgst not in layers:
+    if (dgst in layers and layers[dgst].size < size) or dgst not in layers:
       layers[dgst] = Layer(dgst, size)
     return layers[dgst]
+  
+  def add_alias(self, i: Image):
+    if i:
+      self.__aliases.add(str(i))
+
+  def is_child(self, p: Image) -> bool:
+    if not isinstance(p, Image): 
+      return False 
+    p_layers = set(l.digest for l in p.layers)
+    if not p_layers.issubset(self.__layers.keys()) or len(self.layers) == len(p_layers):
+      return False
+    return self.__parent is None or len(p.layers) > len(self.__parent.layers)
+  
+  def has_alias(self, i: Image) -> bool:
+    if not isinstance(i, Image):
+      return False 
+    a_layers = set(l.digest for l in i.layers)
+    return a_layers == set(self.__layers.keys())
 
   def squash_layers(self):
     layers, layer_sizes = self.__layers, {}
@@ -129,73 +142,76 @@ class Image:
     to_squash = []
     sorted_sizes = sorted(layer_sizes.items())
     for i, (size, ls) in enumerate(sorted_sizes[:-1]):
-      adj_size, adj_layers = sorted_sizes[i + 1]
+      adj_size, _ = sorted_sizes[i + 1]
       if size/adj_size > LAYER_SQUASH_SIM_THRESHOLD:
-        adj_layers[-1].hit(sum(l.n_hits for l in ls))
         to_squash += ls
       elif len(ls) > 1 and size > MIN_LAYER_SQUASH_SIZE:
-        ls[-1].hit(sum(l.n_hits for l in ls[:-1]))
         to_squash += ls[:-1]
     for l in to_squash:
       layers.pop(l.digest)
 
-  def update_last_event(self, ts: datetime.datetime):
-    self.__last_event = ts
-
-  def hit(self):
-    self.__n_hits += 1
-
   def to_json(self) -> Dict[str, object]:
     return {
       'repo': self.repo,
-      'tag': self.tag, 
+      'tag': self.tag,
+      'parent': self.parent and str(self.parent), 
+      'aliases': self.aliases,
       'layers': [l.digest for l in self.layers],
-      'n_hits': self.n_hits,
     }
 
   def build(self, build_dir: str, registry: str=None) -> docker.models.images.Image:
     base = '%s/image'%build_dir
     layer_base = '%s/layer'%build_dir
-    try:
-      logging.debug("Building %s ..."%self)
-      docker_cli = docker.from_env()
-      dockerfile = ['FROM scratch']
-      img_dir = '%s/%s'%(base, self)
-      if os.path.exists(img_dir):
-        shutil.rmtree(img_dir)
-      os.makedirs(img_dir, exist_ok=True)
-      for l in self.layers:
-        logging.debug("Generating layer %s, size %s"%(l.digest, util.size(l.size)))
-        l.build(build_dir)
-        os.link('%s/%s'%(layer_base, l.digest), '%s/%s'%(img_dir, l.digest))
-        dockerfile += 'COPY %s /%s'%(l.digest, l.digest),
-      df_path = '%s/Dockerfile'%img_dir
-      with open(df_path, 'w') as f:
-        f.write('\n'.join(dockerfile))
-      tag = '%s/%s'%(registry, str(self)) if registry else str(self)
-      img, _ = docker_cli.images.build(path=img_dir, tag=tag, 
-                                       dockerfile=os.path.abspath(df_path), rm=True)
-      return img
-    except Exception as e:
-      logging.exception('error pruning image %s'%self)
-      raise e
+    if self.parent and registry:
+      base_img = '%s/%s'%(registry, self.parent)
+    elif not registry:
+      base_img = self.parent 
+    else:
+      base_img = 'scratch'
+    logging.debug("Building %s ..."%self)
+    docker_cli = docker.from_env()
+    dockerfile = ['FROM %s'%base_img]
+    img_dir = '%s/%s'%(base, self)
+    if os.path.exists(img_dir):
+      shutil.rmtree(img_dir)
+    os.makedirs(img_dir, exist_ok=True)
+    for l in self.layers:
+      logging.debug("Generating layer %s, size %s"%(l.digest, util.size(l.size)))
+      l.build(build_dir)
+      os.link('%s/%s'%(layer_base, l.digest), '%s/%s'%(img_dir, l.digest))
+      dockerfile += 'COPY %s /%s'%(l.digest, l.digest),
+    df_path = '%s/Dockerfile'%img_dir
+    with open(df_path, 'w') as f:
+      f.write('\n'.join(dockerfile))
+    tag = '%s/%s'%(registry, str(self)) if registry else str(self)
+    img, _ = docker_cli.images.build(path=img_dir, tag=tag, rm=True,
+                                     dockerfile=os.path.abspath(df_path))
+    api = docker.APIClient()
+    for a in self.aliases:
+      repo, tag = a.split(':')
+      if registry:
+        repo = '%s/%s'%(registry, repo)
+      api.tag(img.id, repo, tag)
+    return img
 
   def push(self, registry: str=None):
-    try:
-      docker_cli = docker.from_env()
-      repo = '%s/%s'%(registry, self.repo) if registry else self.repo
-      docker_cli.images.push(repo, self.tag)
-    except Exception as e:
-      logging.exception('error pruning image %s'%self)
-      raise e
+    docker_cli = docker.from_env()
+    repo = '%s/%s'%(registry, self.repo) if registry else self.repo
+    docker_cli.images.push(repo, self.tag)
+  
+  def push_aliases(self, registry: str=None):
+    if len(self.aliases) == 0:
+      return 
+    docker_cli = docker.from_env()
+    for a in self.aliases:
+      repo, tag = a.split(':')
+      if registry:
+        repo = '%s/%s'%(registry, repo)
+      docker_cli.images.push(repo, tag)
   
   def prune(self, registry: str=None):
-    try:
-      docker_cli = docker.from_env()
-      docker_cli.images.remove('%s/%s'%(registry, str(self)) if registry else str(self))
-    except Exception as e:
-      logging.exception('error pruning image %s'%self)
-      raise e
+    docker_cli = docker.from_env()
+    docker_cli.images.remove('%s/%s'%(registry, str(self)) if registry else str(self))
 
   def __str__(self) -> str:
     return Image.ID(self.repo, self.tag)

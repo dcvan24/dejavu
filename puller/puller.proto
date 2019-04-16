@@ -16,6 +16,8 @@ message ImagePull {
   string client = 3;
   // the registry where to pull the image from
   string registry = 4;
+  // Aliases used by the image
+  repeated string aliases = 5;
 }
 
 // Layer is the constituent layers of an image
@@ -58,9 +60,10 @@ message Config {
   // the specified capacity. The capacity is assumed unbounded if 
   // not set (with value 0)
   uint64 capacity = 1;
-  // Whether include compressed archives of image layers when 
-  // accounting the used space
-  bool include_compressed = 2;
+  // Cache policy used by Docker daemon
+  string cache_policy = 2;
+  // Whether to use compressed archive of layers
+  bool use_archive = 3;
 }
 
 // ImagePuller pulls the image following the specified order 
