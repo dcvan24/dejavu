@@ -47,7 +47,7 @@ def parse_args() -> argparse.Namespace:
                       help='Listening port')
   parser.add_argument('--build-dir', type=str, default='/tmp', dest='build_dir', 
                       help='Build directory')
-  parser.add_argument('--scaling-factor', type=float, default=1., dest='scaling_factor', 
+  parser.add_argument('--scaling-factor', type=float, default=2., dest='scaling_factor', 
                       help='Scaling factor of parallel build')
   parser.add_argument('--registry-dir', type=str, required=True, dest='reg_dir', 
                       help='Docker registry data directory')

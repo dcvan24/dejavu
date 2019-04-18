@@ -107,8 +107,6 @@ class Image:
   @parent.setter
   def parent(self, p: Image):
     self.__parent = p
-    for l in p.layers:
-      self.__layers.pop(l.digest, None)
 
   def add_layer(self, dgst: str, size: int) -> Layer:
     layers = self.__layers
@@ -123,6 +121,8 @@ class Image:
   def is_child(self, p: Image) -> bool:
     if not isinstance(p, Image): 
       return False 
+    if p.parent == str(self):
+      return False
     p_layers = set(l.digest for l in p.layers)
     if not p_layers.issubset(self.__layers.keys()) or len(self.layers) == len(p_layers):
       return False
@@ -135,6 +135,11 @@ class Image:
     return a_layers == set(self.__layers.keys())
 
   def squash_layers(self):
+    parent = self.__parent
+    if parent:
+      for l in parent.layers:
+        self.__layers.pop(l.digest, None)
+        
     layers, layer_sizes = self.__layers, {}
     for l in layers.values():
       layer_sizes.setdefault(l.size, []).append(l)
