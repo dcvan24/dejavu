@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='dejavu.puller',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x0cpuller.proto\x12\rdejavu.puller\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1bgoogle/protobuf/empty.proto\"Y\n\tImagePull\x12\x0c\n\x04repo\x18\x01 \x01(\t\x12\x0b\n\x03tag\x18\x02 \x01(\t\x12\x0e\n\x06\x63lient\x18\x03 \x01(\t\x12\x10\n\x08registry\x18\x04 \x01(\t\x12\x0f\n\x07\x61liases\x18\x05 \x03(\t\"\x9e\x02\n\tLayerStat\x12\x0e\n\x06\x64igest\x18\x01 \x01(\t\x12\x11\n\tfull_size\x18\x02 \x01(\x04\x12\x14\n\x0c\x63ompact_size\x18\x03 \x01(\x04\x12\x0e\n\x06\x65xists\x18\x04 \x01(\x08\x12\x32\n\x0e\x64ownload_start\x18\x05 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x30\n\x0c\x64ownload_end\x18\x06 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x31\n\rextract_start\x18\x07 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12/\n\x0b\x65xtract_end\x18\x08 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\"\xc2\x01\n\x10ImagePullSummary\x12&\n\x04pull\x18\x01 \x01(\x0b\x32\x18.dejavu.puller.ImagePull\x12.\n\nstart_time\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12,\n\x08\x65nd_time\x18\x03 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12(\n\x06layers\x18\x04 \x03(\x0b\x32\x18.dejavu.puller.LayerStat\"E\n\x06\x43onfig\x12\x10\n\x08\x63\x61pacity\x18\x01 \x01(\x04\x12\x14\n\x0c\x63\x61\x63he_policy\x18\x02 \x01(\t\x12\x13\n\x0buse_archive\x18\x03 \x01(\x08\x32\xcf\x01\n\x0bImagePuller\x12<\n\tSetConfig\x12\x15.dejavu.puller.Config\x1a\x16.google.protobuf.Empty\"\x00\x12G\n\x04Pull\x12\x18.dejavu.puller.ImagePull\x1a\x1f.dejavu.puller.ImagePullSummary\"\x00(\x01\x30\x01\x12\x39\n\x05Prune\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\x0cpuller.proto\x12\rdejavu.puller\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1bgoogle/protobuf/empty.proto\"Y\n\tImagePull\x12\x0c\n\x04repo\x18\x01 \x01(\t\x12\x0b\n\x03tag\x18\x02 \x01(\t\x12\x0e\n\x06\x63lient\x18\x03 \x01(\t\x12\x10\n\x08registry\x18\x04 \x01(\t\x12\x0f\n\x07\x61liases\x18\x05 \x03(\t\"\x9e\x02\n\tLayerStat\x12\x0e\n\x06\x64igest\x18\x01 \x01(\t\x12\x11\n\tfull_size\x18\x02 \x01(\x04\x12\x14\n\x0c\x63ompact_size\x18\x03 \x01(\x04\x12\x0e\n\x06\x65xists\x18\x04 \x01(\x08\x12\x32\n\x0e\x64ownload_start\x18\x05 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x30\n\x0c\x64ownload_end\x18\x06 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x31\n\rextract_start\x18\x07 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12/\n\x0b\x65xtract_end\x18\x08 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\"\xf6\x01\n\x10ImagePullSummary\x12&\n\x04pull\x18\x01 \x01(\x0b\x32\x18.dejavu.puller.ImagePull\x12.\n\nstart_time\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12,\n\x08\x65nd_time\x18\x03 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12(\n\x06layers\x18\x04 \x03(\x0b\x32\x18.dejavu.puller.LayerStat\x12\x32\n\rpuller_status\x18\x05 \x01(\x0b\x32\x1b.dejavu.puller.PullerStatus\"/\n\x0cPullerStatus\x12\x10\n\x08\x63\x61pacity\x18\x01 \x01(\x04\x12\r\n\x05level\x18\x02 \x01(\x04\"5\n\nWarmUpLoad\x12\'\n\x05pulls\x18\x01 \x03(\x0b\x32\x18.dejavu.puller.ImagePull\"E\n\x06\x43onfig\x12\x10\n\x08\x63\x61pacity\x18\x01 \x01(\x04\x12\x14\n\x0c\x63\x61\x63he_policy\x18\x02 \x01(\t\x12\x13\n\x0buse_archive\x18\x03 \x01(\x08\x32\x95\x02\n\x0bImagePuller\x12<\n\tSetConfig\x12\x15.dejavu.puller.Config\x1a\x16.google.protobuf.Empty\"\x00\x12\x44\n\x06WarmUp\x12\x19.dejavu.puller.WarmUpLoad\x1a\x1b.dejavu.puller.PullerStatus\"\x00\x30\x01\x12G\n\x04Pull\x12\x18.dejavu.puller.ImagePull\x1a\x1f.dejavu.puller.ImagePullSummary\"\x00(\x01\x30\x01\x12\x39\n\x05Prune\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x62\x06proto3')
   ,
   dependencies=[google_dot_protobuf_dot_timestamp__pb2.DESCRIPTOR,google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
 
@@ -202,6 +202,13 @@ _IMAGEPULLSUMMARY = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='puller_status', full_name='dejavu.puller.ImagePullSummary.puller_status', index=4,
+      number=5, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -215,7 +222,76 @@ _IMAGEPULLSUMMARY = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=474,
-  serialized_end=668,
+  serialized_end=720,
+)
+
+
+_PULLERSTATUS = _descriptor.Descriptor(
+  name='PullerStatus',
+  full_name='dejavu.puller.PullerStatus',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='capacity', full_name='dejavu.puller.PullerStatus.capacity', index=0,
+      number=1, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='level', full_name='dejavu.puller.PullerStatus.level', index=1,
+      number=2, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=722,
+  serialized_end=769,
+)
+
+
+_WARMUPLOAD = _descriptor.Descriptor(
+  name='WarmUpLoad',
+  full_name='dejavu.puller.WarmUpLoad',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='pulls', full_name='dejavu.puller.WarmUpLoad.pulls', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=771,
+  serialized_end=824,
 )
 
 
@@ -259,8 +335,8 @@ _CONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=670,
-  serialized_end=739,
+  serialized_start=826,
+  serialized_end=895,
 )
 
 _LAYERSTAT.fields_by_name['download_start'].message_type = google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP
@@ -271,9 +347,13 @@ _IMAGEPULLSUMMARY.fields_by_name['pull'].message_type = _IMAGEPULL
 _IMAGEPULLSUMMARY.fields_by_name['start_time'].message_type = google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP
 _IMAGEPULLSUMMARY.fields_by_name['end_time'].message_type = google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP
 _IMAGEPULLSUMMARY.fields_by_name['layers'].message_type = _LAYERSTAT
+_IMAGEPULLSUMMARY.fields_by_name['puller_status'].message_type = _PULLERSTATUS
+_WARMUPLOAD.fields_by_name['pulls'].message_type = _IMAGEPULL
 DESCRIPTOR.message_types_by_name['ImagePull'] = _IMAGEPULL
 DESCRIPTOR.message_types_by_name['LayerStat'] = _LAYERSTAT
 DESCRIPTOR.message_types_by_name['ImagePullSummary'] = _IMAGEPULLSUMMARY
+DESCRIPTOR.message_types_by_name['PullerStatus'] = _PULLERSTATUS
+DESCRIPTOR.message_types_by_name['WarmUpLoad'] = _WARMUPLOAD
 DESCRIPTOR.message_types_by_name['Config'] = _CONFIG
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -298,6 +378,20 @@ ImagePullSummary = _reflection.GeneratedProtocolMessageType('ImagePullSummary', 
   ))
 _sym_db.RegisterMessage(ImagePullSummary)
 
+PullerStatus = _reflection.GeneratedProtocolMessageType('PullerStatus', (_message.Message,), dict(
+  DESCRIPTOR = _PULLERSTATUS,
+  __module__ = 'puller_pb2'
+  # @@protoc_insertion_point(class_scope:dejavu.puller.PullerStatus)
+  ))
+_sym_db.RegisterMessage(PullerStatus)
+
+WarmUpLoad = _reflection.GeneratedProtocolMessageType('WarmUpLoad', (_message.Message,), dict(
+  DESCRIPTOR = _WARMUPLOAD,
+  __module__ = 'puller_pb2'
+  # @@protoc_insertion_point(class_scope:dejavu.puller.WarmUpLoad)
+  ))
+_sym_db.RegisterMessage(WarmUpLoad)
+
 Config = _reflection.GeneratedProtocolMessageType('Config', (_message.Message,), dict(
   DESCRIPTOR = _CONFIG,
   __module__ = 'puller_pb2'
@@ -313,8 +407,8 @@ _IMAGEPULLER = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=742,
-  serialized_end=949,
+  serialized_start=898,
+  serialized_end=1175,
   methods=[
   _descriptor.MethodDescriptor(
     name='SetConfig',
@@ -326,9 +420,18 @@ _IMAGEPULLER = _descriptor.ServiceDescriptor(
     serialized_options=None,
   ),
   _descriptor.MethodDescriptor(
+    name='WarmUp',
+    full_name='dejavu.puller.ImagePuller.WarmUp',
+    index=1,
+    containing_service=None,
+    input_type=_WARMUPLOAD,
+    output_type=_PULLERSTATUS,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
     name='Pull',
     full_name='dejavu.puller.ImagePuller.Pull',
-    index=1,
+    index=2,
     containing_service=None,
     input_type=_IMAGEPULL,
     output_type=_IMAGEPULLSUMMARY,
@@ -337,7 +440,7 @@ _IMAGEPULLER = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='Prune',
     full_name='dejavu.puller.ImagePuller.Prune',
-    index=2,
+    index=3,
     containing_service=None,
     input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
     output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,

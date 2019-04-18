@@ -22,6 +22,11 @@ class ImagePullerStub(object):
         request_serializer=puller__pb2.Config.SerializeToString,
         response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
         )
+    self.WarmUp = channel.unary_stream(
+        '/dejavu.puller.ImagePuller/WarmUp',
+        request_serializer=puller__pb2.WarmUpLoad.SerializeToString,
+        response_deserializer=puller__pb2.PullerStatus.FromString,
+        )
     self.Pull = channel.stream_stream(
         '/dejavu.puller.ImagePuller/Pull',
         request_serializer=puller__pb2.ImagePull.SerializeToString,
@@ -42,6 +47,15 @@ class ImagePullerServicer(object):
 
   def SetConfig(self, request, context):
     """SetConfig configures the image puller as specified
+    """
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def WarmUp(self, request, context):
+    """WarmUp warms up the puller's cache with the input load.
+    It yields the PullerStatus to inform the client of the 
+    puller's current status
     """
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
     context.set_details('Method not implemented!')
@@ -69,6 +83,11 @@ def add_ImagePullerServicer_to_server(servicer, server):
           servicer.SetConfig,
           request_deserializer=puller__pb2.Config.FromString,
           response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+      ),
+      'WarmUp': grpc.unary_stream_rpc_method_handler(
+          servicer.WarmUp,
+          request_deserializer=puller__pb2.WarmUpLoad.FromString,
+          response_serializer=puller__pb2.PullerStatus.SerializeToString,
       ),
       'Pull': grpc.stream_stream_rpc_method_handler(
           servicer.Pull,

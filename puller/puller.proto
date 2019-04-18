@@ -51,6 +51,22 @@ message ImagePullSummary {
   google.protobuf.Timestamp end_time = 3;
   // statistics of the activities related to the constituent layers
   repeated LayerStat layers = 4;
+  // current status of the puller
+  PullerStatus puller_status = 5;
+}
+
+// PullerStatus contains the current status of the puller 
+message PullerStatus {
+  // Capacity of the puller
+  uint64 capacity = 1;
+  // Space used 
+  uint64 level = 2;
+}
+
+// WarmUpLoad is the load for warming up the puller's cache
+message WarmUpLoad {
+  // Image pulls for cache warm-up
+  repeated ImagePull pulls = 1;
 }
 
 // Config encodes the puller's configurations
@@ -73,6 +89,11 @@ service ImagePuller {
 
   // SetConfig configures the image puller as specified
   rpc SetConfig(Config) returns (google.protobuf.Empty){}
+
+  // WarmUp warms up the puller's cache with the input load.
+  // It yields the PullerStatus to inform the client of the 
+  // puller's current status
+  rpc WarmUp(WarmUpLoad) returns (stream PullerStatus){}
 
   // Pull starts the specified image pull and yields the ImagePullSummary 
   // immediately after the pull finishes

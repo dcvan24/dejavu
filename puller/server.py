@@ -31,33 +31,38 @@ class ImagePullerServicer(puller_grpc.ImagePullerServicer):
     self.__puller = Puller()
     self.__args = args
     self.__cfg = pb2.Config()
+    self.__init_size = 0
 
   def SetConfig(self, cfg: pb2.Config, context) -> Empty:
     self.__cfg = cfg
     self.__puller.start_dockerd(cfg, self.__args.dockerd_path)
+    self.__init_size = util.get_dir_size(self.__args.docker_home)
     return Empty()
+
+  def WarmUp(self, load: pb2.WarmUpLoad, context) -> Generator[pb2.PullerStatus, None, None]:
+    cfg, args = self.__cfg, self.__args
+    for p in load.pulls:
+      self.__puller.warm_up(p)
+      space_used = util.get_dir_size(args.docker_home) - self.__init_size
+      logging.info('Space: %s/%s'%(util.size(space_used), util.size(cfg.capacity)))
+      yield pb2.PullerStatus(capacity=cfg.capacity, level=space_used)
 
   def Pull(self, pull_gen: Generator[pb2.ImagePull, None, None], context) -> Generator[pb2.ImagePullSummary, None, None]:
     cfg, args = self.__cfg, self.__args
     try:
-      if cfg.capacity > 0:
-        logging.info('Capacity: %s'%util.size(cfg.capacity))
-      init_size = util.get_dir_size(os.path.join(args.docker_home, args.graphdriver))
       for p in pull_gen:
-        space_used = util.get_dir_size(os.path.join(args.docker_home, args.graphdriver)) - init_size
+        s = self.__puller.pull_image(p)
+        space_used = util.get_dir_size(args.docker_home) - self.__init_size
         logging.info('Space: %s/%s'%(util.size(space_used), util.size(cfg.capacity)))
-        yield self.__puller.pull_image(p)
+        s.puller_status.capacity, s.puller_status.level = cfg.capacity, space_used
+        yield s
     finally:
+      self.__puller.prune_images()
       self._clean_up_docker_images()
-      self._prune()
 
   def Prune(self, empty, context) -> Empty:
-    self._prune()
-    return Empty()
-
-  def _prune(self):
     self.__puller.prune_images()
-    self.__space_used = 0
+    return Empty()
 
   def _clean_up_docker_images(self):
     args = self.__args
@@ -79,6 +84,7 @@ def parse_args() -> argparse.Namespace:
   parser.add_argument('--graphdriver', type=str, default='overlay2', dest='graphdriver', 
                       help='Docker graph driver')
   return parser.parse_args()
+
 
 def serve(args: argparse.Namespace):
   server = grpc.server(futures.ThreadPoolExecutor(max_workers=1))

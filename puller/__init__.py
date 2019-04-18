@@ -34,6 +34,9 @@ class Puller:
     logging.info('Wait %ds for dockerd to fully start ...'%wait_time)    
     time.sleep(wait_time)
 
+  def warm_up(self, pull: pb2.ImagePull):
+    self.pull_image(pull)
+
   def pull_image(self, pull: pb2.ImagePull) -> pb2.ImagePullSummary: 
     cli, summaries = self.__cli, self.__summaries
     image = '%s/%s:%s'%(pull.registry, pull.repo, pull.tag)
@@ -47,7 +50,8 @@ class Puller:
                                     'Pull complete', 'Already exists'):
         continue 
       if status == 'Pulling fs layer' and dgst not in pulls:
-        pulls[dgst] = pb2.LayerStat(digest=dgst, download_start=util.get_current_time())
+        pulls[dgst] = pb2.LayerStat(digest=dgst)
+        pulls[dgst].download_start.GetCurrentTime()
       elif status == 'Extracting':
         cur = pulls.setdefault(dgst, pb2.LayerStat(digest=dgst))
         cur.compact_size = self._parse_size(l['progress'].split('/')[-1])
